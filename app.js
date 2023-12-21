@@ -16,18 +16,13 @@ $(function () {
 
     // Function to check if the game has a winner or is a draw
     function checkGameResult() {
-        if (
-            checkWinner('X') ||
-            checkWinner('O') ||
-            gameBoard.every(cell => cell !== '')
-        ) {
+        if (checkWinner('X') || checkWinner('O') || (gameBoard.every(cell => cell !== '') && !checkWinner('X') && !checkWinner('O'))) {
             displayResult();
         }
     }
 
     // Function to check if the current player has won
     function checkWinner(player) {
-        // Check rows, columns, and diagonals
         for (let i = 0; i < 3; i++) {
             if (
                 (gameBoard[i * 3] === player && gameBoard[i * 3 + 1] === player && gameBoard[i * 3 + 2] === player) ||
@@ -36,7 +31,7 @@ $(function () {
                 (i === 2 && gameBoard[2] === player && gameBoard[4] === player && gameBoard[6] === player)
             ) {
                 gameOver = true;
-                displayResult(player);
+                displayResult(player === 'X' ? 'Player X' : 'Player O');
                 return true;
             }
         }
@@ -50,13 +45,12 @@ $(function () {
     }
 
     // Function to display the game result
-    function displayResult(winner = 'draw') {
-        if (winner === 'draw') {
-            $('#turn').text('It\'s a Draw!');
+    function displayResult() {
+        if (gameBoard.every(cell => cell !== '')) {
+            $('#result-alert').html('<div class="alert alert-warning" role="alert">It\'s a Draw!</div>').show();
         } else {
-            $('#turn').text(`${winner} Wins!`);
+            $('#result-alert').html(`<div class="alert alert-success" role="alert">${currentPlayer === 'X' ? 'Player X' : 'Player O'} is the Winner!</div>`).show();
         }
-        gameOver = true;
     }
 
     // Event listener for cell clicks
@@ -78,5 +72,6 @@ $(function () {
         gameOver = false;
         $('td').text('');
         $('#turn').text(`${currentPlayer}'s Turn`);
+        $('#result-alert').hide();
     }
 });
